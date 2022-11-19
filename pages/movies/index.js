@@ -1,13 +1,16 @@
+import Image from 'next/image'
+
 import { getMovies } from "../../api/handlers/movies";
 
 const Movies = ({ movies }) => {
   return (
     <div>
+      <Image src="/amaterasuuuuuu.png" width={100} height={100} alt="Test image" />
       Movies:
       <ul>
         {movies.map(movie => (
           <div key={movie.id}>
-            <span>Title - {movie.title}; Origin - {movie.originCountry}</span>
+            <span style={{ fontWeight: 700 }}>Title - {movie.title}; Origin - {movie.originCountry}</span>
           </div>
         ))}
       </ul>
