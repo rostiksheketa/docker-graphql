@@ -1,13 +1,40 @@
-version : "3.8"
-
-services: 
-  my-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-          - "3000:3000"
+services:
+  redis:
+    image: redis
+    container_name: cache
+    expose:
+      - 6379
+    networks:
+      - main-network
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    expose:
+      - 5432
+    networks:
+      - main-network
+    env_file:
+      - .env
     volumes:
-      - .:/pdp-docker-graphql
-    container_name: pdp-docker-graphql-app
-    command: npm start
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgReportData:/var/lib/postgresql/data
+  api:
+    image: public.ecr.aws/s4t6p0z6/express-app-gql:latest
+    container_name: express-app-gql
+    ports:
+      - 8000:8000
+    expose:
+      - 8000
+    networks:
+      - main-network
+    depends_on:
+      - redis
+      - postgres
+    env_file:
+      - .env
+networks:
+  main-network:
+    driver: bridge
+volumes:
+  pgReportData:
+    driver: local
